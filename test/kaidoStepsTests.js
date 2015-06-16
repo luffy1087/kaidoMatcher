@@ -1,6 +1,6 @@
 var kaidoStepsClass = require('../kaidoSteps')
   , should = require('should')
-  ,	features = require('./featuresModel');
+  , features = require('./featuresModel');
 
 describe('kaidoSteps', function() {
 

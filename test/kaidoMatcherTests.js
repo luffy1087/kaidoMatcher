@@ -1,6 +1,6 @@
 var kaidoMatcherClass = require('../kaidoMatcher')
   , should = require('should')
-  ,	features = require('./featuresModel')
+  , features = require('./featuresModel')
   , sinon = require('sinon');
 
 function err(){ throw new Error(); }
