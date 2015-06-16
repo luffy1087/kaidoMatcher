@@ -1,0 +1,28 @@
+{
+  "name": "kaidoMatcher",
+  "version": "0.0.1",
+  "description": "Matches the kaidoJson come from kaidoParser and executes associated codes",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luffy1087/kaidoMatcher.git"
+  },
+  "keywords": [
+    "kaidoMatcher"
+  ],
+  "author": "Luffy1087",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luffy1087/kaidoMatcher/issues"
+  },
+  "homepage": "https://github.com/luffy1087/kaidoMatcher",
+  "devDependencies": {
+    "mocha": "^2.2.5",
+    "should": "^6.0.3",
+    "sinon": "^1.15.3"
+  },
+  "dependencies": {
+    "glob": "^5.0.10",
+    "promise": "^7.0.3"
+  }
+}
