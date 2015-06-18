@@ -11,6 +11,8 @@ describe('kaidoSteps', function() {
 	it('prototype', function() {
 		kaidoSteps.init.should.be.instanceOf(Function);
 		kaidoSteps.addStep.should.be.instanceOf(Function);
+		kaidoSteps.getSteps.should.be.instanceOf(Function);
+		kaidoSteps.getStep.should.be.instanceOf(Function);
 	});
 
 	it('check steps function taken from keywords', function() {
@@ -26,17 +28,28 @@ describe('kaidoSteps', function() {
 		kaidoSteps.getSteps().should.be.instanceOf(Object);
 	});
 
+	it('getStep', function() {
+		kaidoSteps.given(/I do that/, function() {});
+		kaidoSteps.when(/I do this/, function(){}, 'firstScenario');
+		kaidoSteps.then(/something happens/, function(){});
+		kaidoSteps.getStep('I do that').should.be.instanceOf(Object);
+		kaidoSteps.getStep('I do this', 'firstScenario').should.be.instanceOf(Object);
+		kaidoSteps.getStep('something happens').should.be.instanceOf(Object);
+		(function() {
+			kaidoSteps.getStep('it should raise an error');
+		}).should.throw(); // the step is not matched by any regexp
+	});
+
 	it('check adding steps', function() {
 		kaidoSteps.given(/I visit the home page/, function() {});
-		kaidoSteps.steps.should.have.property('I visit the home page');
+		kaidoSteps.getSteps().global.length.should.be.equal(1);
 	});
 	
 	it('check deplicate steps', function() {
 		kaidoSteps.given(/I visit the home page/, function() {});
 		(function(){
 			kaidoSteps.given(/I visit the home page/, function() {});			
-		}).should.throw(/Duplicate/);
-		
+		}).should.throw(/Duplicate/i);
 	});
 
 });

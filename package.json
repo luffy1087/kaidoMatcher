@@ -2,7 +2,7 @@
   "name": "kaidoMatcher",
   "version": "0.0.1",
   "description": "Matches the kaidoJson come from kaidoParser and executes associated codes",
-  "main": "index.js",
+  "main": "kaidoMatcher.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/luffy1087/kaidoMatcher.git"

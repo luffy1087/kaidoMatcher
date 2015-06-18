@@ -17,38 +17,44 @@
 	}
 
 	function requireStepsFile(stepsFilesPath) {
-		var kSteps = this.kSteps, stepFileName;
+		var kaidoSteps = this.kaidoSteps
+		  , basePath = process.cwd()
+		  , stepFileName;
 		for (var i = 0, stepFilePath; stepFilePath = stepsFilesPath[i]; i++) {
-			stepFilePath = './' + stepFilePath;
-			stepFileName = stepFilePath.split('/')[2];
-			require(stepFilePath).defineSteps(kSteps);
+			stepFilePath = basePath + '/' + stepFilePath;
+			stepFileName = stepFilePath.split('/').pop();
+			try {
+				require(stepFilePath).defineSteps(kaidoSteps);
+			} catch(e){
+				console.log('Require error: Cannot find module ' + stepFileName);
+				console.log(e);
+			}
 		}
-		return kSteps;
+		return kaidoSteps;
 	}
 
-	function executeStep(regString) {
-		var kSteps = this.kSteps
-		  ,	steps = kSteps.getSteps()
-		  ,	currentStep
-		  ,	regExp
-		  ,	callback;
+	function executeStep(stepText, camelScenarioName) {
+		var step = this.kaidoSteps.getStep(stepText, camelScenarioName)
+		  , callback = step.callback
+		  , regVars = /<\w+>/g
+		  , vars = stepText.match(regVars) || [];
 
-		currentStep = steps[regString];
-		regExp = currentStep.reg;
-		callback = currentStep.callback;
-		if (regExp.test(regString)) {
-			callback();
-		} else {
-			throw new Error('Step [' + regString + '] was not executed');
+		if (vars.length > 0) {
+			vars = vars.map(function(elm) {return elm.replace(/[<>]/g, '');});
 		}
-		return true;
+
+		stepText = stepText.replace(regVars, '');
+
+		//1) placeholders must be resolved before launching kaidoSteps
+		//2) pass variables to callback...done
+		callback.apply(null, vars);
 	}
 
 	function execute() {
 		this.features.forEach(function(feature) {
 			feature.scenarios.forEach(function(scenario) {
 				scenario.steps.forEach(function(step) {
-					this.executeStep(step.step);
+					this.executeStep(step.step, scenario.camelScenarioName);
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
@@ -56,14 +62,14 @@
 	}
 
 	function start() {
-		var p = new Promise(this.getStepsFiles.bind(this));
+		var p = new Promise(this.getStepsFiles.bind(this))
 
-		p.then(function(files) {
+		.then(function(files) {
 			this.requireStepsFile(files);
 			return 1;
-		}.bind(this));
+		}.bind(this))
 
-		p.then(function(filesAgain) {
+		.then(function() {
 			this.execute();
 			return 1;
 		}.bind(this));
@@ -73,7 +79,7 @@
 
 	function KaidoMatcherClass(features) {
 		this.features = features;
-		this.kSteps = new kaidoStepsClass(features);
+		this.kaidoSteps = new kaidoStepsClass(features);
 	}
 	KaidoMatcherClass.prototype.start = start;
 	KaidoMatcherClass.prototype.getStepsFiles = getStepsFiles;
